@@ -1,0 +1,27 @@
+.pannel {
+  height: 90%;
+  padding: 0px 5px;
+  min-width: 98%;
+}
+
+.question,
+.questions-list {
+  height: 70vh;
+  overflow-y: scroll;
+}
+
+.questions-nav {
+  display: block;
+}
+
+.questions-nav-btn {
+  display: none;
+}
+
+.ql-container {
+  height: 200px !important;
+}
+
+.multiselect-dropdown .dropdown-btn .selected-item{
+  max-width: 100% !important;
+}

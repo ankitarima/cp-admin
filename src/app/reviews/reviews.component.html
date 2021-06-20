@@ -1,0 +1,208 @@
+<div class="container" style="margin-top: 10px;">
+  <div class="row">
+    <div class="col-12">
+      <div class="my-2">
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#allReviews" aria-expanded="false" aria-controls="allReviews">
+          Show all reviews
+        </button>
+      </div>
+      <div class="collapse p-0 pt-2" id="allReviews">
+        <div class="card card-body" style="max-height: 400px;">
+          <div class="table-responsive my-4">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">College name</th>
+                  <th scope="col">Tags</th>
+                  <th scope="col">status</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let review of reviews">
+                  <th scope="row">{{review.college_name}} </th>
+                  <td> {{review.tags}}</td>
+                  <td> {{review.status}}</td>
+                  <td>
+                    <button type="button" class="btn btn-warning" style="margin: 2px;"
+                    (click)="publish(review);" data-bs-toggle="tooltip" data-bs-placement="left">
+                      <i class="fas fa-upload" *ngIf="review.status == 'draft'"></i>
+                      <i class="fas fa-download" *ngIf="review.status == 'public'"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary" style="margin: 2px;"
+                    (click)="edit(review);" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit">
+                      <i class="far fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="reviews.length == 0" >
+                  <td colspan="4" style="text-align: center;">There is no review at the moment</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <hr class="my-3">
+
+    <div class="col-12">
+      <p style="margin:0px; font-size:18px; font-weight:500;">Add College Review</p>
+
+      <form [formGroup]="rform"
+      (keydown.enter)="$event.preventDefault()"
+      (ngSubmit)="onSubmit()">
+        <div class="row">
+
+          <!-- right-side  -->
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="college_name">College name</label>
+              <input type="text" class="form-control my-2" id="college_name" placeholder="College Name" formControlName="college_name">
+            </div>
+            <div class="form-group">
+              <label for="more_name">College more names</label>
+              <input type="text" class="form-control my-2" id="more_name" placeholder="College also know as ..." formControlName="more_name">
+            </div>
+            <div class="form-group">
+              <label for="college_type">College type</label>
+               <select  class="form-control my-2" name="college_type" id="college_type" formControlName="college_type">
+                 <option value="private">Private</option>
+                 <option value="govt">Govt</option>
+                 <option value="ppp">ppp</option>
+               </select>
+            </div>
+            <div class="form-group">
+              <label for="foundation_year">Foundation year</label>
+              <input type="text" class="form-control my-2" id="foundation_year" placeholder="1997" formControlName="foundation_year">
+            </div>
+            <div class="form-group">
+              <label for="campus_area">Campus area</label>
+              <input type="text" class="form-control my-2" id="campus_area" placeholder="8 acers" formControlName="campus_area">
+            </div>
+            <div class="form-group">
+              <label for="college_city">College city</label>
+              <input type="text" class="form-control my-2" id="college_city" placeholder="New delhi" formControlName="college_city">
+            </div>
+            <div class="form-group">
+              <label for="college_state">College state</label>
+              <input type="text" class="form-control my-2" id="college_state" placeholder="Delhi" formControlName="college_state">
+            </div>
+
+            <div class="form-group">
+              <label for="tags">College state</label>
+              <input type="text" class="form-control my-2" id="tags" placeholder="iit,nit,top college, delhi" formControlName="tags">
+            </div>
+
+            <div class="col-12 m-1"style="align-self: center;">
+              <div class="form-group" >
+                <label for="logo">College logo</label>
+                <input type="url" class="form-control" (change)="onLogoFile($event)" id="logo" formControlName="logo" placeholder="Paste logo url">
+              </div>
+            </div>
+            <div class="col-12 m-1">
+              <div class="text-center p-3" style="height: 300px;">
+                <img [src]="LogoimgSrc" width="300px" alt="">
+              </div>
+            </div>
+            <div class="col-12 m-1"style="align-self: center;">
+              <div class="form-group" >
+                <label for="featured_image">Featured Image</label>
+                <input type="url" class="form-control" (change)="onFile($event)" id="featured_image" formControlName="featured_image" placeholder="Paste image url">
+              </div>
+            </div>
+            <div class="col-12 m-1">
+              <div class="text-center p-3" style="height: 300px;">
+                <img [src]="imgSrc" width="300px" alt="">
+              </div>
+            </div>
+          </div>
+          <!-- left-side  -->
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="basic_info">College basic info / Desciption</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="basic_info"></div>
+            </div>
+            <div class="form-group">
+              <label for="connectivity">College Connectivity</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="connectivity"></div>
+            </div>
+            <div class="form-group">
+              <label for="ranking">College ranking</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="ranking"></div>
+            </div>
+            <div class="form-group">
+              <label for="eligibility_criteria">College eligibility criteria</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="eligibility_criteria"></div>
+            </div>
+            <div class="form-group">
+              <label for="admission_proccess">Admission proccess</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="admission_proccess"></div>
+            </div>
+            <div class="form-group">
+              <label for="offered_courses">Offered Courses</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="offered_courses"></div>
+            </div>
+            <div class="form-group">
+              <label for="seat_matrix">Seat matrix</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="seat_matrix"></div>
+            </div>
+            <div class="form-group">
+              <label for="alumni">College alumni</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="alumni"></div>
+            </div>
+            <div class="form-group">
+              <label for="fees">Fees</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="fees"></div>
+            </div>
+            <div class="form-group">
+              <label for="fee_waiver">Fees waiver</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="fee_waiver"></div>
+            </div>
+            <div class="form-group">
+              <label for="placements">College placements</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="placements"></div>
+            </div>
+            <div class="form-group">
+              <label for="facilities">College facilities</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="facilities"></div>
+            </div>
+            <div class="form-group">
+              <label for="college_pros">College pros</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="college_pros"></div>
+            </div>
+            <div class="form-group">
+              <label for="college_cons">College cons</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="college_cons"></div>
+            </div>
+            <div class="form-group">
+              <label for="review_video">Review video</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="review_video"></div>
+            </div>
+            <div class="form-group">
+              <label for="faq">Faq</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="faq"></div>
+            </div>
+            <div class="form-group">
+              <label for="college_contact">College contact</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="college_contact"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="text-center">
+          <button type="submit" class="btn sbtn btn-primary m-2" *ngIf="!isSubmitting">Submit</button>
+          <button class="btn sbtn btn-primary m-2" type="button" *ngIf="isSubmitting" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

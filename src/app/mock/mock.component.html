@@ -1,0 +1,144 @@
+<div class="container" style="margin: 0px 0px;">
+  <div class="row ">
+    <div class="col-12">
+      <div class="my-2">
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#allQuestions" aria-expanded="false" aria-controls="allQuestions">
+          Show all mock tests
+        </button>
+      </div>
+      <div class="collapse p-0 pt-2" id="allQuestions">
+        <div class="card card-body" style="max-height: 400px;">
+          <div class="table-responsive my-4">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Category</th>
+                  <th scope="col">Test Name</th>
+                  <th scope="col">Duration</th>
+                  <th scope="col">Questios</th>
+                  <th scope="col">Marks</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let test of mockTests">
+                  <th scope="row">{{test.category}}</th>
+                  <td> {{test.test_name}}</td>
+                  <td> {{test.status}}</td>
+                  <td> {{test.total_duration}}</td>
+                  <td> {{test.total_questions}}</td>
+                  <td> {{test.total_score}}</td>
+                  <td>
+                    <button type="button" class="btn btn-warning" style="margin: 2px;"
+                    (click)="publish(test);" data-bs-toggle="tooltip" data-bs-placement="left">
+                      <i class="fas fa-upload" *ngIf="test.status == 'draft'"></i>
+                      <i class="fas fa-download" *ngIf="test.status == 'public'"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary" style="margin: 2px;"
+                    (click)="edit(test);" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit">
+                      <i class="far fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="mockTests.length == 0" >
+                  <td colspan="7" style="text-align: center;">There is no mock test yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <hr class="my-3">
+
+
+    <div class="col-12">
+      <p style="margin: 0; font-size: 18px; font-weight: 500;">Add New Mock Test</p>
+
+      <form class="row content-justify-center" [formGroup]="eform" (ngSubmit)="onSubmit()">
+        <div class="col-md-6">
+          <div class="col-12 m-1">
+            <div class="form-group">
+              <label for="test_name">Moack Test Name</label>
+              <input type="text" class="form-control" id="test_name" placeholder="Test name" formControlName="test_name">
+            </div>
+          </div>
+          <div class="col-12 m-1">
+            <div class="form-group" >
+              <label for="category">Select Category</label>
+              <select name="category" id="category" class="form-control" formControlName="category">
+                <option value="" selected disabled> Select Category</option>
+                <option value="{{category.slug}}" *ngFor=" let category of categoryList">{{category.name}}</option>
+              </select>
+            </div>
+          </div>
+          <!-- <div class="col-12 m-1">
+            <div class="form-group">
+              <label for="durations">Create durations</label>
+              <input type="text" class="form-control" id="durations" placeholder="30:25,60:45" formControlName="durations">
+              <small id="durations" class="form-text text-muted">
+                Enter as time:no of question. Use ',' for multiple inputs. Eg. 30:25,60:45
+              </small>
+            </div>
+          </div> -->
+          <div class="col-12 m-1">
+            <div class="form-group">
+              <label for="total_questions">Total no of Questions</label>
+              <input type="text" class="form-control" id="total_questions" placeholder="90" formControlName="total_questions">
+            </div>
+          </div>
+          <div class="col-12 m-1">
+            <div class="form-group">
+              <label for="total_score">Total score</label>
+              <input type="text" class="form-control" id="total_score" placeholder="360" formControlName="total_score">
+            </div>
+          </div>
+          <div class="col-12 m-1">
+            <div class="form-group">
+              <label for="total_duration">Total duration</label>
+              <input type="text" class="form-control" id="total_duration" placeholder="90" formControlName="total_duration">
+              <small id="total_duration" class="form-text text-muted">
+                Duration in minutes
+              </small>
+            </div>
+          </div>
+          <div class="col-12 m-1">
+            <div class="form-group">
+              <label for="postive_mark">Enter postive mark</label>
+              <input type="number" class="form-control" id="postive_mark" placeholder="marks" formControlName="postive_mark" min="1" max="10">
+              <small id="postive_mark" class="form-text text-muted">
+                Enter marks which will warded for each right answer. Range 1-10
+              </small>
+            </div>
+          </div>
+          <div class="col-12 m-1">
+            <div class="form-group">
+              <label for="negetive_mark">Enter negetive mark</label>
+              <input type="number" class="form-control" id="negetive_mark" placeholder="marks" formControlName="negetive_mark" min="0" max="5">
+              <small id="negetive_mark" class="form-text text-muted">
+                Enter marks which will deducted for each wrong answer.Range 0-4
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="col-12 m-1">
+            <label for="">Enter Instructions for the test</label>
+            <div class="form-control my-2" [ngxSummernote]="config" formControlName="instructions"></div>
+          </div>
+          <div class="col-12 text-center my-2">
+            <button type="submit" class="btn btn-primary m-2 px-5" *ngIf="!lBtn">Submit</button>
+            <button class="btn btn-primary" type="button" disabled *ngIf="lBtn">
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Loading...
+            </button>
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

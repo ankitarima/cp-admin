@@ -1,0 +1,524 @@
+<div class="container" style="margin: 20px 0px">
+  <div class="row">
+    <div class="col-12">
+      <div class="my-2">
+        <button
+          class="btn btn-primary"
+          type="button"
+          data-bs-toggle="collapse"
+          (click)="clearSerach()"
+          data-bs-target="#allQuestions"
+          aria-expanded="false"
+          aria-controls="allQuestions"
+        >
+          Show all questions
+        </button>
+      </div>
+      <div class="collapse" id="allQuestions">
+        <p
+          style="margin: 0; padding: 10px 0px"
+          *ngIf="questionsList.length != 0"
+        >
+          Total no of questions = {{ questionsList.length }}
+        </p>
+
+        <!-- <button *ngIf="questionsList.length != 0" (click)="download()"
+        class="btn btn-primary" type="button">Export</button> -->
+
+        <div class="card card-body" style="max-height: 400px">
+          <form [formGroup]="sForm" (ngSubmit)="getDetails()">
+            <label for="test">Select a test</label>
+            <div class="input-group">
+              <select class="form-select" id="test" formControlName="test">
+                <option
+                  value="{{ test.slug }}"
+                  *ngFor="let test of mockTestLists"
+                >
+                  {{ test.name }}
+                </option>
+              </select>
+              <button class="btn btn-outline-secondary" type="submit">
+                Go
+              </button>
+            </div>
+          </form>
+          <div class="table-responsive my-4">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Question</th>
+                  <th scope="col">Subject</th>
+                  <th scope="col">Level</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let question of questionsList">
+                  <th scope="row">{{ question.qno }}</th>
+                  <td [innerHtml]="question.question"></td>
+                  <td>{{ question.subject }}</td>
+                  <td>{{ question.level }}</td>
+                  <td>
+                    <button
+                      type="button"
+                      class="btn btn-warning"
+                      style="margin: 2px"
+                      (click)="preview(question)"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="left"
+                      title="Preview"
+                    >
+                      <i class="far fa-eye"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      style="margin: 2px"
+                      (click)="edit(question)"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="left"
+                      title="Edit"
+                    >
+                      <i class="far fa-edit"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-warning"
+                      style="margin: 2px"
+                      (click)="delete(question.id)"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="left"
+                      title="Delete"
+                    >
+                      <i class="far fa-trash-alt"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="questionsList.length == 0 && !isql && !isqm">
+                  <td colspan="5" style="text-align: center">
+                    No questions found
+                  </td>
+                </tr>
+                <tr *ngIf="isql">
+                  <td colspan="5" style="text-align: center">loading ...</td>
+                </tr>
+                <tr *ngIf="isqm && !isql">
+                  <td colspan="5" style="text-align: center">Select a test</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <h3>Add a new question</h3>
+      <form
+        #qForm="ngForm"
+        class="row content-justify-center my-2"
+        [formGroup]="eform"
+        (ngSubmit)="onSubmit()"
+      >
+        <input type="text" formControlName="id" hidden />
+        <div class="col-12 my-1">
+          <div class="form-group">
+            <label for="test_name">Select Mock Tests</label>
+            <ng-multiselect-dropdown
+              [placeholder]="'select mock tests'"
+              [settings]="dropdownSettings"
+              [data]="dropdownList"
+              [(ngModel)]="selectedItems"
+              (onSelect)="onItemSelect($event)"
+              (onSelectAll)="onSelectAll($event)"
+              (onDeSelect)="onDeSelect($event)"
+              (onDeSelectAll)="onDeSelectAll($event)"
+              formControlName="test_name"
+            >
+            </ng-multiselect-dropdown>
+          </div>
+        </div>
+        <div class="col-12 m-1">
+          <label for="">Enter Question</label>
+          <quill-editor
+            [modules]="editor_modules"
+            id="question"
+            formControlName="question"
+          ></quill-editor>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="option1">Option 1</label>
+            <quill-editor
+              [modules]="editor_modules"
+              id="option1"
+              formControlName="option1"
+            ></quill-editor>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="option2">Option 2</label>
+            <quill-editor
+              [modules]="editor_modules"
+              id="option2"
+              formControlName="option2"
+            ></quill-editor>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="option3">Option 3</label>
+            <quill-editor
+              [modules]="editor_modules"
+              id="option3"
+              formControlName="option3"
+            ></quill-editor>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="option4">Option 4</label>
+            <quill-editor
+              [modules]="editor_modules"
+              id="option4"
+              formControlName="option4"
+            ></quill-editor>
+          </div>
+        </div>
+        <div class="row m-1">
+          <div class="col-md-6">
+            <div class="col-12 my-2">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  id="correct_option"
+                  aria-label="Floating label select example"
+                  formControlName="correct_option"
+                >
+                  <option value="option1">option 1</option>
+                  <option value="option2">option 2</option>
+                  <option value="option3">option 3</option>
+                  <option value="option4">option 4</option>
+                </select>
+                <label for="correct_option">Correct Option</label>
+              </div>
+            </div>
+            <div class="col-12 my-2">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  id="level"
+                  aria-label="Floating label select example"
+                  formControlName="level"
+                >
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+                <label for="level">Difficulty level</label>
+              </div>
+            </div>
+            <div class="col-12 my-2">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  id="subject"
+                  aria-label="Floating label select example"
+                  formControlName="subject"
+                >
+                  <option value="maths">maths</option>
+                  <option value="physics">Physics</option>
+                  <option value="chemistry">Chemistry</option>
+                  <option value="other">Other</option>
+                </select>
+                <label for="subject">Select subject</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="row content-justify-center pt-4" *ngIf="iswbjee">
+              <div class="col-12 m-1">
+                <div class="form-group">
+                  <label for="subject">Select category / section</label>
+                  <select
+                    class="form-select"
+                    id="subject"
+                    formControlName="section"
+                  >
+                    <option value="1">Section 1</option>
+                    <option value="2">Section 2</option>
+                    <option value="3">Section 3</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-5 m-1">
+                <div class="form-group">
+                  <label for="postive_mark">Enter postive mark</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="postive_mark"
+                    placeholder="marks"
+                    formControlName="postive_mark"
+                    min="1"
+                    max="10"
+                  />
+                </div>
+              </div>
+              <div class="col-md-5 m-1">
+                <div class="form-group">
+                  <label for="negetive_mark">Enter negetive mark</label>
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="negetive_mark"
+                    placeholder="marks"
+                    formControlName="negetive_mark"
+                    min="0"
+                    max="5"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row content-justify-center pt-4">
+              <div class="col-md-6 text-center">
+                <button
+                  type="button"
+                  class="btn btn-primary m-2"
+                  (click)="preview(true); qForm.ngSubmit.emit()"
+                >
+                  Preview
+                </button>
+              </div>
+              <div class="col-md-6 text-center">
+                <button
+                  type="submit"
+                  class="btn btn-primary m-2"
+                  (click)="preview(false)"
+                  *ngIf="!lBtn"
+                >
+                  Submit
+                </button>
+                <button
+                  class="btn btn-primary"
+                  type="button"
+                  disabled
+                  *ngIf="lBtn"
+                >
+                  <span
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  Loading...
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Button trigger modal -->
+<button
+  type="button"
+  class="btn btn-primary"
+  id="previewbtn"
+  data-bs-toggle="modal"
+  data-bs-target="#previewModal"
+  hidden
+>
+  Launch static backdrop modal
+</button>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="previewModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="previewModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="previewModalLabel">Preview Question</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="container pannel">
+          <div class="row h-100">
+            <div class="col-md-12 col-lg-9 my-auto">
+              <div class="card">
+                <div class="card-header">
+                  <div class="row p-1">
+                    <div class="col-4 m-0 p-0 text-start my-auto">
+                      <p class="m-0">Question 1</p>
+                    </div>
+                    <div class="col-4 m-0 p-0 text-center my-auto">
+                      <p class="m-0">00:00:00</p>
+                    </div>
+                    <div class="col-4 m-0 p-0 text-end my-auto"></div>
+                  </div>
+                </div>
+                <div class="card-body question">
+                  <div class="alert alert-light m-0" role=" alert">
+                    <div *ngIf="pq" [innerHtml]="pq.question"></div>
+                  </div>
+                  <hr />
+                  <form class="row g-3">
+                    <div class="col-md-6">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="answer"
+                        value="option1"
+                        id="option1"
+                      />
+                      <label
+                        class="form-check-label mx-2"
+                        for="option1"
+                        *ngIf="pq"
+                        [innerHtml]="pq.option1"
+                      >
+                      </label>
+                    </div>
+                    <div class="col-md-6">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="answer"
+                        value="option2"
+                        id="option2"
+                      />
+                      <label
+                        class="form-check-label mx-2"
+                        for="option2"
+                        *ngIf="pq"
+                        [innerHtml]="pq.option2"
+                      >
+                      </label>
+                    </div>
+                    <div class="col-md-6">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="answer"
+                        value="option3"
+                        id="option3"
+                      />
+                      <label
+                        class="form-check-label mx-2"
+                        for="option3"
+                        *ngIf="pq"
+                        [innerHtml]="pq.option3"
+                      >
+                      </label>
+                    </div>
+                    <div class="col-md-6">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="answer"
+                        value="option4"
+                        id="option4"
+                      />
+                      <label
+                        class="form-check-label mx-2"
+                        for="option4"
+                        *ngIf="pq"
+                        [innerHtml]="pq.option4"
+                      >
+                      </label>
+                    </div>
+                  </form>
+                </div>
+                <div class="card-footer">
+                  <div class="row">
+                    <div class="col-4 text-start my-auto px-0">
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        style="margin: auto"
+                      >
+                        <i class="fas fa-arrow-left"></i>
+                      </button>
+                      <button
+                        type="submit"
+                        class="btn btn-warning"
+                        style="margin: 2px"
+                      >
+                        <i class="far fa-trash-alt"></i>
+                      </button>
+                    </div>
+                    <div class="col-4 text-center my-auto px-sm-0">
+                      <button
+                        type="submit"
+                        class="btn btn-danger"
+                        style="margin: auto"
+                      >
+                        Submit
+                      </button>
+                    </div>
+                    <div class="col-4 text-end my-auto px-sm-0">
+                      <button
+                        type="submit"
+                        class="btn btn-warning"
+                        style="margin: 2px"
+                      >
+                        <i class="far fa-bookmark"></i>
+                      </button>
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                        style="margin: auto"
+                      >
+                        <i class="fas fa-arrow-right"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12 col-lg-3 my-auto questions-nav">
+              <div class="card h-100">
+                <div class="card-header">
+                  <p class="m-0 p-1">Navigate to questions</p>
+                </div>
+                <div class="card-body questions-list"></div>
+                <div class="card-footer">
+                  <div class="row">
+                    <div class="col-12 text-center my-auto">
+                      <button
+                        class="btn btn-primary"
+                        style="margin: auto"
+                        class="btn btn-primary"
+                      >
+                        Instructions
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

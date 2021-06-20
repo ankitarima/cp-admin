@@ -1,0 +1,105 @@
+<div class="container" style="margin-top: 10px;">
+  <div class="row">
+    <div class="col-12">
+      <div class="my-2">
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#allReviews" aria-expanded="false" aria-controls="allReviews">
+          Show all exams
+        </button>
+      </div>
+      <div class="collapse p-0 pt-2" id="allReviews">
+        <div class="card card-body" style="max-height: 400px;">
+          <div class="table-responsive my-4">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Exam</th>
+                  <th scope="col">tags</th>
+                  <th scope="col">status</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let exam of exams">
+                  <th scope="row">{{exam.exam_name}} </th>
+                  <td> {{exam.tags}}</td>
+                  <td> {{exam.status}}</td>
+                  <td>
+                    <button type="button" class="btn btn-warning" style="margin: 2px;"
+                    (click)="publish(exam);" data-bs-toggle="tooltip" data-bs-placement="left">
+                      <i class="fas fa-upload" *ngIf="exam.status == 'draft'"></i>
+                      <i class="fas fa-download" *ngIf="exam.status == 'public'"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary" style="margin: 2px;"
+                    (click)="edit(exam);" data-bs-toggle="tooltip" data-bs-placement="left" title="Edit">
+                      <i class="far fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="exams.length == 0" >
+                  <td colspan="4" style="text-align: center;">There is no exam at the moment</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <hr class="my-3">
+
+    <div class="col-12">
+      <p style="margin:0px; font-size:18px; font-weight:500;">Add exam</p>
+
+      <form [formGroup]="eform" (ngSubmit)="onSubmit()">
+        <div class="row">
+
+          <!-- right-side  -->
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="exam_name">Exam name</label>
+              <input type="text" class="form-control my-2" id="exam_name" placeholder="Exam name" formControlName="exam_name">
+            </div>
+            <div class="form-group">
+              <label for="tags">Tags</label>
+              <input type="text" class="form-control my-2" id="tags" placeholder="jee,iit,wbjee ..." formControlName="tags">
+            </div>
+            <div class="form-group">
+              <label for="exam_description">Short Description</label>
+              <input type="text" class="form-control my-2" id="exam_description" placeholder="Short Description" formControlName="exam_description">
+            </div>
+            <div class="col-12 m-1"style="align-self: center;">
+              <div class="form-group" >
+                <label for="featured_image">Featured Image</label>
+                <input type="url" class="form-control" (change)="onFile($event)" id="featured_image" formControlName="featured_image" placeholder="Paste image url">
+              </div>
+            </div>
+            <div class="col-12 m-1">
+              <div class="text-center p-3" style="height: 300px;">
+                <img [src]="imgSrc" width="300px" alt="">
+              </div>
+            </div>
+          </div>
+          <!-- left-side  -->
+          <div class="col-md-12">
+            <div class="form-group">
+              <label for="basic_info">Exam Details</label>
+              <div class="form-control my-2" [ngxSummernote]="config" formControlName="exam_details"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="text-center">
+          <button type="submit" class="btn sbtn btn-primary m-2" *ngIf="!isSubmitting">Submit</button>
+          <button class="btn sbtn btn-primary m-2" type="button" *ngIf="isSubmitting" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

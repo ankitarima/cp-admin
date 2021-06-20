@@ -1,0 +1,20 @@
+<div class="sidebar">
+  <img src="assets/images/logo.png" alt="" class="img-fluid py-3">
+
+  <a [routerLink]="['/mock-category']" class="mx-1" > Mock Category</a>
+  <a [routerLink]="['/mock-test']" class="mx-1" > Mock Tests</a>
+  <a [routerLink]="['/questions']" class="mx-1" >Questions</a>
+  <a [routerLink]="['/review']" class="mx-1" > Review</a>
+  <a [routerLink]="['/cut-off']" class="mx-1" > Cutt Off</a>
+  <a [routerLink]="['/exam']" class="mx-1" > Exam</a>
+  <a href="javascript:void(0)"
+  *ngIf="isAuth"
+  (click)="logout()"> Logout</a>
+</div>
+
+<div class="content">
+  <router-outlet></router-outlet>
+</div>
+
+
+
